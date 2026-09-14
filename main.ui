@@ -23,6 +23,43 @@
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFichier">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <addaction name="actionOuvrir"/>
+    <addaction name="actionEnregistrer"/>
+    <addaction name="actionEnregistrer_sous"/>
+   </widget>
+   <widget class="QMenu" name="menu_dition">
+    <property name="title">
+     <string>Édition</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuGraphe">
+    <property name="title">
+     <string>Graphe</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTableau">
+    <property name="title">
+     <string>Tableau</string>
+    </property>
+    <addaction name="actionCharger_des_valeurs"/>
+    <addaction name="actionExporter_des_valeurs"/>
+    <addaction name="actionEffacer_toutes_les_valeurs"/>
+   </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>Aide</string>
+    </property>
+    <addaction name="actionA_propos"/>
+   </widget>
+   <addaction name="menuFichier"/>
+   <addaction name="menu_dition"/>
+   <addaction name="menuGraphe"/>
+   <addaction name="menuTableau"/>
+   <addaction name="menuAide"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
@@ -60,6 +97,41 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2"/>
   </widget>
+  <action name="actionA_propos">
+   <property name="text">
+    <string>A propos</string>
+   </property>
+  </action>
+  <action name="actionCharger_des_valeurs">
+   <property name="text">
+    <string>Charger des valeurs</string>
+   </property>
+  </action>
+  <action name="actionExporter_des_valeurs">
+   <property name="text">
+    <string>Exporter des valeurs</string>
+   </property>
+  </action>
+  <action name="actionEffacer_toutes_les_valeurs">
+   <property name="text">
+    <string>Effacer toutes les valeurs</string>
+   </property>
+  </action>
+  <action name="actionOuvrir">
+   <property name="text">
+    <string>Nouveau</string>
+   </property>
+  </action>
+  <action name="actionEnregistrer">
+   <property name="text">
+    <string>Ouvrir</string>
+   </property>
+  </action>
+  <action name="actionEnregistrer_sous">
+   <property name="text">
+    <string>Enregistrer</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
