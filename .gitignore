@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 /.kdev4
 *.kdev4
+*.kate-swp
