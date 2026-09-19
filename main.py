@@ -1,15 +1,23 @@
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
-from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit,
-    QListView, QMainWindow, QMenu, QMenuBar,
-    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-    QToolBar, QVBoxLayout, QWidget)
+
+try:
+    from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+        QMetaObject, QObject, QPoint, QRect,
+        QSize, QTime, QUrl, Qt)
+    from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+        QCursor, QFont, QFontDatabase, QGradient,
+        QIcon, QImage, QKeySequence, QLinearGradient,
+        QPainter, QPalette, QPixmap, QRadialGradient,
+        QTransform)
+    from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit,
+        QListView, QMainWindow, QMenu, QMenuBar,
+        QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
+        QToolBar, QVBoxLayout, QWidget)
+except ModuleNotFoundError:
+    print('''FATAL :
+    Les modules ne sont pas installé !
+    Veuillez éxecuter la commande : 
+    Windows : pip install PySide6
+    Linux (fedora) : sudo dnf install python3-pyside6 (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
 import sys
 
 class Ui_MainWindow(object):
@@ -126,7 +134,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph (version gartuite)", None))
         self.actionA_propos.setText(QCoreApplication.translate("MainWindow", u"A propos", None))
         self.actionCharger_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Charger des valeurs", None))
         self.actionExporter_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Exporter des valeurs", None))
@@ -153,6 +161,8 @@ class Ui_MainWindow(object):
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Saisir une expression", None))
         self.maintoolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"Barre d'outils principale", None))
     # retranslateUi
+
+
 
 
 if __name__ == "__main__": #Fonction aidée par l'IA
