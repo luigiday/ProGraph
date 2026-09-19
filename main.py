@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit
     QListView, QMainWindow, QMenu, QMenuBar,
     QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
     QToolBar, QVBoxLayout, QWidget)
+import sys
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -152,4 +153,13 @@ class Ui_MainWindow(object):
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Saisir une expression", None))
         self.maintoolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"Barre d'outils principale", None))
     # retranslateUi
+
+
+if __name__ == "__main__": #Fonction aidée par l'IA
+    app = QApplication(sys.argv)
+    main_window = QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(main_window)
+    main_window.show()
+    sys.exit(app.exec())
 
