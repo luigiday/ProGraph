@@ -135,6 +135,8 @@ class Ui_MainWindow(object):
         self.maintoolBar.addAction(self.actionEnregistrer)
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
+        self.actionA_propos.triggered.connect(lambda: self.show_info_simple("ProGraph.\n\nVersion : 1.0.0\nAuteurs : Colin, Noah, Timur\nLicence : Aucune"))
+
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
