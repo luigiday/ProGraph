@@ -169,7 +169,16 @@ class Ui_MainWindow(object):
         self.maintoolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"Barre d'outils principale", None))
     # retranslateUi
 
-    
+    def show_info_simple(self, text):
+        try:
+            msgBox = QMessageBox(parent=main_window)
+            msgBox.setText(f"{text}")
+            msgBox.setInformativeText(f"Message : {text}")
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setWindowTitle("Information - ProGraph")
+            msgBox.exec()
+        except Exception as e:
+            show_app_error(main_window, f'''Impossible d'afficher l'alerte "info_simple"\nMessage : {e}''')
 
     def show_error_simple(self, action, text):
         try:
