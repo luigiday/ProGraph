@@ -173,7 +173,6 @@ class Ui_MainWindow(object):
         try:
             msgBox = QMessageBox(parent=main_window)
             msgBox.setText(f"{text}")
-            msgBox.setInformativeText(f"Message : {text}")
             msgBox.setIcon(QMessageBox.Icon.Information)
             msgBox.setWindowTitle("Information - ProGraph")
             msgBox.exec()
