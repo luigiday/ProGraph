@@ -2,7 +2,7 @@
 try:
     from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
         QMetaObject, QObject, QPoint, QRect,
-        QSize, QTime, QUrl, Qt)
+        QSize, QTime, QUrl, Qt, QStringListModel)
     from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
         QCursor, QFont, QFontDatabase, QGradient,
         QIcon, QImage, QKeySequence, QLinearGradient,
@@ -11,7 +11,7 @@ try:
     from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit,
         QListView, QMainWindow, QMenu, QMenuBar,
         QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-        QToolBar, QVBoxLayout, QWidget)
+        QToolBar, QVBoxLayout, QWidget, QMessageBox)
 except ModuleNotFoundError:
     print('''FATAL :
     Les modules ne sont pas installé !
@@ -19,6 +19,13 @@ except ModuleNotFoundError:
     Windows : pip install PySide6
     Linux (fedora) : sudo dnf install python3-pyside6 (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
 import sys
+from calculator import calculate
+
+
+def show_app_error(parent, message):
+    print(f'''Dump de l'erreur d'app\n\n{message}\n\nFin du dump''')
+    QMessageBox.critical(parent, "Une erreur est survenue dans l'application", message)
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -134,7 +141,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph (version gartuite)", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph", None))
         self.actionA_propos.setText(QCoreApplication.translate("MainWindow", u"A propos", None))
         self.actionCharger_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Charger des valeurs", None))
         self.actionExporter_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Exporter des valeurs", None))
@@ -162,14 +169,45 @@ class Ui_MainWindow(object):
         self.maintoolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"Barre d'outils principale", None))
     # retranslateUi
 
+    
+
+    def show_error_simple(self, action, text):
+        try:
+            msgBox = QMessageBox(parent=main_window)
+            msgBox.setText(f"Une erreur est survenue dans l'action \"{action}\"")
+            msgBox.setInformativeText(f"Message : {text}")
+            msgBox.setIcon(QMessageBox.Icon.Warning)
+            msgBox.setWindowTitle("Erreur de sous-module (non-fatale)")
+            msgBox.exec()
+        except Exception as e:
+            show_app_error(main_window, f'''Impossible d'afficher l'alerte "error_simple"\nMessage : {e}''')
+
+    def calculator(self, MainWindow):
+        pass
 
 
-
-if __name__ == "__main__": #Fonction aidée par l'IA
+if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     app = QApplication(sys.argv)
     main_window = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(main_window)
+
+    results_model = QStringListModel()
+    ui.listView.setModel(results_model)
+
+    def handle_expression(): # Gère la saisie dans la calculatrice
+        expression = ui.lineEdit.text() # On récupere le texte du champ
+        if expression.strip(): # on verifie que le champ n'est pas vide
+            try:
+                result = calculate(expression) # On utilise la fonction de la classe calulator pour obtenir un résultat
+                results = results_model.stringList()
+                results.append(f"{expression} = {result}") # On formatte ca joliment
+                results_model.setStringList(results) # On ajoute a la liste
+            except Exception as e:
+                ui.show_error_simple("calcul", str(e))
+        ui.lineEdit.clear() # On efface le champ de saisie
+
+    ui.lineEdit.returnPressed.connect(handle_expression) # Demande a champ de saisie de nous dire quand l'utilisateur appuie sur entrée
     main_window.show()
     sys.exit(app.exec())
 

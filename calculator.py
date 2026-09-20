@@ -2,15 +2,10 @@
 def calculate(e):
     try:
         a = eval(e)
-        print(a)
+        return str(a)
     except ZeroDivisionError:
-        print("Impossible")
+        return "Impossible"
     except SyntaxError:
-        print("Erreur de syntaxe")
+        raise SyntaxError("Erreur de syntaxe dans l'expression ou l'expression n'est pas un calcul valide")
     except Exception as ex:
-        print("Pas un calcul")
-    
-
-
-e = input("Expression : ")
-calculate(e)
+        raise SyntaxError("L'expression saisie n'est pas un calcul")
