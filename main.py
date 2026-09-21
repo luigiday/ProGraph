@@ -13,7 +13,7 @@ try:
     from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit,
         QListView, QMainWindow, QMenu, QMenuBar,
         QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-        QToolBar, QVBoxLayout, QWidget, QMessageBox)
+        QToolBar, QVBoxLayout, QWidget, QMessageBox, QLabel, QDialog, QDialogButtonBox)
     import pyqtgraph as pg
 except ModuleNotFoundError:
     print('''FATAL :
@@ -100,6 +100,7 @@ class Ui_MainWindow(object):
         self.tableWidget = QTableWidget(self.dockWidgetContents)
         if (self.tableWidget.columnCount() < 2):
             self.tableWidget.setColumnCount(2)
+        self.tableWidget.setRowCount(150)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -227,6 +228,51 @@ class Ui_MainWindow(object):
         self.graph.setData([point[0] for point in points],
                            [point[1] for point in points])
 
+class Ui_GraphPropDialog(object):
+    def setupUi(self, GraphPropDialog):
+        if not GraphPropDialog.objectName():
+            GraphPropDialog.setObjectName(u"GraphPropDialog")
+        GraphPropDialog.resize(400, 300)
+        self.buttonBox = QDialogButtonBox(GraphPropDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setGeometry(QRect(50, 260, 341, 32))
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+        self.lineEdit = QLineEdit(GraphPropDialog)
+        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setGeometry(QRect(10, 50, 381, 32))
+        self.label = QLabel(GraphPropDialog)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(10, 20, 371, 18))
+        self.label_2 = QLabel(GraphPropDialog)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setGeometry(QRect(10, 100, 371, 18))
+        self.lineEdit_2 = QLineEdit(GraphPropDialog)
+        self.lineEdit_2.setObjectName(u"lineEdit_2")
+        self.lineEdit_2.setGeometry(QRect(10, 130, 381, 32))
+        self.label_3 = QLabel(GraphPropDialog)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setGeometry(QRect(10, 180, 371, 18))
+        self.lineEdit_3 = QLineEdit(GraphPropDialog)
+        self.lineEdit_3.setObjectName(u"lineEdit_3")
+        self.lineEdit_3.setGeometry(QRect(10, 210, 381, 32))
+
+        self.retranslateUi(GraphPropDialog)
+        self.buttonBox.accepted.connect(GraphPropDialog.accept)
+        self.buttonBox.rejected.connect(GraphPropDialog.reject)
+
+        QMetaObject.connectSlotsByName(GraphPropDialog)
+    # setupUi
+
+    def retranslateUi(self, GraphPropDialog):
+        GraphPropDialog.setWindowTitle(QCoreApplication.translate("GraphPropDialog", u"Propriet\u00e9s du graphique", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"Titre", None))
+        self.label.setText(QCoreApplication.translate("GraphPropDialog", u"Titre du graphique", None))
+        self.label_2.setText(QCoreApplication.translate("GraphPropDialog", u"Titre des abscisses", None))
+        self.lineEdit_2.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"X", None))
+        self.label_3.setText(QCoreApplication.translate("GraphPropDialog", u"Titre des ordonn\u00e9es", None))
+        self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"Y", None))
+    # retranslateUi
 
 if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     app = QApplication(sys.argv)
@@ -237,6 +283,22 @@ if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
 
     results_model = QStringListModel()
     ui.listView.setModel(results_model)
+
+    def show_properties_dialog():
+        dialog = QDialog(main_window)
+        prop_ui = Ui_GraphPropDialog()
+        prop_ui.setupUi(dialog)
+
+        # Set current graph properties in the dialog
+        prop_ui.lineEdit.setText(ui.graphWidget.titleLabel.text)
+        prop_ui.lineEdit_2.setText(ui.graphWidget.getAxis('bottom').label.text)
+        prop_ui.lineEdit_3.setText(ui.graphWidget.getAxis('left').label.text)
+
+        if dialog.exec() == QDialog.Accepted:
+            # Update graph properties based on user input
+            ui.graphWidget.setTitle(prop_ui.lineEdit.text())
+            ui.graphWidget.getAxis('bottom').setLabel(prop_ui.lineEdit_2.text())
+            ui.graphWidget.getAxis('left').setLabel(prop_ui.lineEdit_3.text())
 
     def handle_expression(): # Gère la saisie dans la calculatrice
         expression = ui.lineEdit.text() # On récupere le texte du champ
