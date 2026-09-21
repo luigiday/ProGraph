@@ -1,4 +1,6 @@
 
+import sys
+
 try:
     from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
         QMetaObject, QObject, QPoint, QRect,
@@ -12,13 +14,14 @@ try:
         QListView, QMainWindow, QMenu, QMenuBar,
         QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
         QToolBar, QVBoxLayout, QWidget, QMessageBox)
+    import pyqtgraph as pg
 except ModuleNotFoundError:
     print('''FATAL :
     Les modules ne sont pas installé !
     Veuillez éxecuter la commande : 
     Windows : pip install PySide6
     Linux (fedora) : sudo dnf install python3-pyside6 (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
-import sys
+    sys.exit(1)
 from calculator import calculate
 
 
@@ -57,6 +60,19 @@ class Ui_MainWindow(object):
         self.actionOuvrirtoolbar.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+        self.centralLayout = QVBoxLayout(self.centralwidget)
+        self.centralLayout.setObjectName(u"centralLayout")
+        self.graphWidget = pg.PlotWidget(self.centralwidget)
+        self.graphWidget.setObjectName(u"graphWidget")
+        self.graphWidget.setLabel("left", "Y")
+        self.graphWidget.setLabel("bottom", "X")
+        self.graphWidget.showGrid(x=True, y=True, alpha=0.3)
+        self.graphWidget.setBackground("w")
+        self.graphWidget.setTitle("Graphique des valeurs")
+        self.graph = self.graphWidget.plot([], [], pen=pg.mkPen("#2563eb", width=2),
+                            symbol="o", symbolBrush="#2563eb",
+                            symbolSize=7)
+        self.centralLayout.addWidget(self.graphWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -135,15 +151,13 @@ class Ui_MainWindow(object):
         self.maintoolBar.addAction(self.actionEnregistrer)
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
-        self.actionA_propos.triggered.connect(lambda: self.show_info_simple("ProGraph.\n\nVersion : 1.0.0\nAuteurs : Colin, Noah, Timur\nLicence : Aucune"))
-
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph (version gartuite)", None))
         self.actionA_propos.setText(QCoreApplication.translate("MainWindow", u"A propos", None))
         self.actionCharger_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Charger des valeurs", None))
         self.actionExporter_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Exporter des valeurs", None))
@@ -195,12 +209,31 @@ class Ui_MainWindow(object):
     def calculator(self, MainWindow):
         pass
 
+    def update_graph(self):
+        xs = []
+        ys = []
+        for row in range(self.tableWidget.rowCount()):
+            x_item = self.tableWidget.item(row, 0)
+            y_item = self.tableWidget.item(row, 1)
+            if x_item is None or y_item is None:
+                continue
+            try:
+                xs.append(float(x_item.text().replace(",", ".")))
+                ys.append(float(y_item.text().replace(",", ".")))
+            except ValueError:
+                continue
+
+        points = sorted(zip(xs, ys))
+        self.graph.setData([point[0] for point in points],
+                           [point[1] for point in points])
+
 
 if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     app = QApplication(sys.argv)
     main_window = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(main_window)
+    ui.tableWidget.itemChanged.connect(ui.update_graph)
 
     results_model = QStringListModel()
     ui.listView.setModel(results_model)
