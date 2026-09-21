@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ProGraph (version gartuite)</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
@@ -95,7 +95,47 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2"/>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QListView" name="listView">
+       <property name="flow">
+        <enum>QListView::Flow::TopToBottom</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Saisir une expression</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="maintoolBar">
+   <property name="windowTitle">
+    <string>Barre d'outils principale</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOuvrir"/>
+   <addaction name="actionEnregistrer"/>
+   <addaction name="actionEnregistrer_sous"/>
   </widget>
   <action name="actionA_propos">
    <property name="text">
@@ -118,18 +158,38 @@
    </property>
   </action>
   <action name="actionOuvrir">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
    <property name="text">
     <string>Nouveau</string>
    </property>
   </action>
   <action name="actionEnregistrer">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::FolderOpen"/>
+   </property>
    <property name="text">
     <string>Ouvrir</string>
    </property>
   </action>
   <action name="actionEnregistrer_sous">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::InputKeyboard"/>
+   </property>
    <property name="text">
     <string>Enregistrer</string>
+   </property>
+  </action>
+  <action name="actionOuvrirtoolbar">
+   <property name="text">
+    <string>Ouvrir</string>
+   </property>
+   <property name="toolTip">
+    <string>Ouvre un fichier</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>
