@@ -13,3 +13,12 @@ class Tableau:
             return self.ys[index]
         else:
             return None
+
+tableau = Tableau()
+while True:
+    x = input("Enter x value (or 'exit' to quit): ")
+    if x.lower() == 'exit':
+        break
+    y = input("Enter y value: ")
+    tableau.add(x, y)
+    print(tableau.get())
