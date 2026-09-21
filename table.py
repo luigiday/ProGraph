@@ -21,4 +21,4 @@ while True:
         break
     y = input("Enter y value: ")
     tableau.add(x, y)
-    print(tableau.get())
+    
