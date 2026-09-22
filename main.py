@@ -156,6 +156,7 @@ class Ui_MainWindow(object):
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
         self.actionProprietes.triggered.connect(lambda: show_properties_dialog())
+        self.actionOuvrir.triggered.connect(lambda: self.show_question_warning("Voulez-vous créer un nouveau fichier ?\nLes informations non-sauvegardées du fichier actuel seront perdues !"))
 
         self.retranslateUi(MainWindow)
 
@@ -217,6 +218,19 @@ class Ui_MainWindow(object):
             msgBox.exec()
         except Exception as e:
             show_app_error(main_window, f'''Impossible d'afficher l'alerte "error_simple"\nMessage : {e}''')
+
+    def show_question_warning(self, text):
+            try:
+                msgBox = QMessageBox(parent=main_window)
+                msgBox.setText(f"{text}")
+                msgBox.setIcon(QMessageBox.Icon.Warning)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                msgBox.setDefaultButton(QMessageBox.StandardButton.No)
+                msgBox.setWindowTitle("Question - ProGraph")
+                r = msgBox.exec()
+                return r == QMessageBox.StandardButton.Yes
+            except Exception as e:
+                show_app_error(main_window, f'''Impossible d'afficher l'alerte "error_simple"\nMessage : {e}''')
 
     def calculator(self, MainWindow):
         pass
