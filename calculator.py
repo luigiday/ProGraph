@@ -1,8 +1,11 @@
 
 def calculate(e):
     try:
+        if "^" in e:
+            e = e.replace("^", "**")
         a = eval(e)
         return str(a)
+    
     except ZeroDivisionError:
         return "Impossible"
     except SyntaxError:
