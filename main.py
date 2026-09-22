@@ -37,6 +37,8 @@ class Ui_MainWindow(object):
         MainWindow.resize(958, 600)
         self.actionA_propos = QAction(MainWindow)
         self.actionA_propos.setObjectName(u"actionA_propos")
+        self.actionProprietes = QAction(MainWindow)
+        self.actionProprietes.setObjectName(u"actionProprietes")
         self.actionCharger_des_valeurs = QAction(MainWindow)
         self.actionCharger_des_valeurs.setObjectName(u"actionCharger_des_valeurs")
         self.actionExporter_des_valeurs = QAction(MainWindow)
@@ -148,18 +150,27 @@ class Ui_MainWindow(object):
         self.menuTableau.addAction(self.actionExporter_des_valeurs)
         self.menuTableau.addAction(self.actionEffacer_toutes_les_valeurs)
         self.menuAide.addAction(self.actionA_propos)
+        self.menuGraphe.addAction(self.actionProprietes)
         self.maintoolBar.addAction(self.actionOuvrir)
         self.maintoolBar.addAction(self.actionEnregistrer)
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
+        self.actionProprietes.triggered.connect(lambda: show_properties_dialog())
+
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+
+        # Variables utiles et nécessaires au fontcionnement correcte du graphe
+        self.graph_title = "Graphique des valeurs"
+        self.x_axis_title = "X"
+        self.y_axis_title = "Y"
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph (version gartuite)", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph", None))
         self.actionA_propos.setText(QCoreApplication.translate("MainWindow", u"A propos", None))
+        self.actionProprietes.setText(QCoreApplication.translate("MainWindow", u"Propriétés", None))
         self.actionCharger_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Charger des valeurs", None))
         self.actionExporter_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Exporter des valeurs", None))
         self.actionEffacer_toutes_les_valeurs.setText(QCoreApplication.translate("MainWindow", u"Effacer toutes les valeurs", None))
@@ -233,6 +244,8 @@ class Ui_GraphPropDialog(object):
         if not GraphPropDialog.objectName():
             GraphPropDialog.setObjectName(u"GraphPropDialog")
         GraphPropDialog.resize(400, 300)
+        GraphPropDialog.setMinimumSize(QSize(400, 300))
+        GraphPropDialog.setMaximumSize(QSize(400, 300))
         self.buttonBox = QDialogButtonBox(GraphPropDialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setGeometry(QRect(50, 260, 341, 32))
@@ -272,7 +285,6 @@ class Ui_GraphPropDialog(object):
         self.lineEdit_2.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"X", None))
         self.label_3.setText(QCoreApplication.translate("GraphPropDialog", u"Titre des ordonn\u00e9es", None))
         self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"Y", None))
-    # retranslateUi
 
 if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     app = QApplication(sys.argv)
@@ -290,15 +302,18 @@ if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
         prop_ui.setupUi(dialog)
 
         # Set current graph properties in the dialog
-        prop_ui.lineEdit.setText(ui.graphWidget.titleLabel.text)
-        prop_ui.lineEdit_2.setText(ui.graphWidget.getAxis('bottom').label.text)
-        prop_ui.lineEdit_3.setText(ui.graphWidget.getAxis('left').label.text)
+        prop_ui.lineEdit.setText(ui.graph_title)
+        prop_ui.lineEdit_2.setText(ui.x_axis_title)
+        prop_ui.lineEdit_3.setText(ui.y_axis_title)
 
         if dialog.exec() == QDialog.Accepted:
             # Update graph properties based on user input
             ui.graphWidget.setTitle(prop_ui.lineEdit.text())
+            ui.graph_title = prop_ui.lineEdit.text()
             ui.graphWidget.getAxis('bottom').setLabel(prop_ui.lineEdit_2.text())
+            ui.x_axis_title = prop_ui.lineEdit_2.text()
             ui.graphWidget.getAxis('left').setLabel(prop_ui.lineEdit_3.text())
+            ui.y_axis_title = prop_ui.lineEdit_3.text()
 
     def handle_expression(): # Gère la saisie dans la calculatrice
         expression = ui.lineEdit.text() # On récupere le texte du champ
