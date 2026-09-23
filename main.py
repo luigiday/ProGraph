@@ -24,6 +24,28 @@ except ModuleNotFoundError:
     sys.exit(1)
 from calculator import calculate
 
+class Tableau:
+    def __init__(self):
+        self.xs = []
+        self.ys = []
+
+    def add(self, x, y):
+        self.xs.append(x)
+        self.ys.append(y)
+
+    def get(self):
+        return self.xs, self.ys
+
+    def get_y(self, x):
+        if x in self.xs:
+            index = self.xs.index(x)
+            return self.ys[index]
+        else:
+            return None
+
+    def clear(self):
+        self.xs.clear()
+        self.ys.clear()
 
 def show_app_error(parent, message):
     print(f'''Dump de l'erreur d'app\n\n{message}\n\nFin du dump''')
@@ -163,6 +185,7 @@ class Ui_MainWindow(object):
         QMetaObject.connectSlotsByName(MainWindow)
 
         # Variables utiles et nécessaires au fontcionnement correcte du graphe
+        self.tableau = Tableau()
         self.graph_title = "Graphique des valeurs"
         self.x_axis_title = "X"
         self.y_axis_title = "Y"
@@ -236,22 +259,39 @@ class Ui_MainWindow(object):
         pass
 
     def update_graph(self):
-        xs = []
-        ys = []
+        self.tableau.clear()
+        self.tableWidget.blockSignals(True)
         for row in range(self.tableWidget.rowCount()):
             x_item = self.tableWidget.item(row, 0)
             y_item = self.tableWidget.item(row, 1)
-            if x_item is None or y_item is None:
+            if not x_item or not y_item:
                 continue
-            try:
-                xs.append(float(x_item.text().replace(",", ".")))
-                ys.append(float(y_item.text().replace(",", ".")))
-            except ValueError:
-                continue
+            x_str = x_item.text().strip().replace(",",".")
+            y_str = y_item.text().strip().replace(",",".")
 
-        points = sorted(zip(xs, ys))
-        self.graph.setData([point[0] for point in points],
-                           [point[1] for point in points])
+            if not x_str or not y_str:
+                continue
+            if x_str in self.tableau.xs:
+                self.show_error_simple("update_graph", f"Valeur de X en double : {x_str}")
+                self.tableWidget.blockSignals(False)
+                return
+            try:
+                float(x_str)
+                float(y_str)
+            except ValueError:
+                self.show_error_simple("update_graph", f"Valeur non numérique : X={x_str}, Y={y_str}")
+                self.tableWidget.blockSignals(False)
+                return
+            self.tableau.add(x_str, y_str)
+        self.tableWidget.blockSignals(False)
+        xs, ys = self.tableau.get()
+
+        points = sorted([(float(x), float(y)) for x, y in zip(xs, ys)])
+        self.graph.setData([p[0] for p in points], [p[1] for p in points])
+
+        #points = sorted(zip(xs, ys))
+        #self.graph.setData([point[0] for point in points],
+                           #[point[1] for point in points])
 
 class Ui_GraphPropDialog(object):
     def setupUi(self, GraphPropDialog):
