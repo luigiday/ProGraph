@@ -271,7 +271,6 @@ class Ui_MainWindow(object):
 
     def nouv_fichier(self):
         if self.show_question_warning("Voulez-vous créer un nouveau fichier ?\nLes informations non-sauvegardées du fichier actuel seront perdues !"):
-            print("yes clicked")
             self.tableWidget.clearContents()
             self.tableau.clear()
             self.update_graph()
