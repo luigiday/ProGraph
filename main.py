@@ -15,14 +15,28 @@ try:
         QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
         QToolBar, QVBoxLayout, QWidget, QMessageBox, QLabel, QDialog, QDialogButtonBox)
     import pyqtgraph as pg
-except ModuleNotFoundError:
+except ModuleNotFoundError as e:
     print('''FATAL :
     Les modules ne sont pas installé !
     Veuillez éxecuter la commande : 
     Windows : pip install PySide6
     Linux (fedora) : sudo dnf install python3-pyside6 (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
+    print(e)
     sys.exit(1)
-from calculator import calculate
+
+def calculate(e):
+    try:
+        if "^" in e:
+            e = e.replace("^", "**")
+        a = eval(e)
+        return str(a)
+    
+    except ZeroDivisionError:
+        return "Impossible"
+    except SyntaxError:
+        raise SyntaxError("Erreur de syntaxe dans l'expression ou l'expression n'est pas un calcul valide")
+    except Exception as ex:
+        raise SyntaxError("L'expression saisie n'est pas un calcul")
 
 class Tableau:
     def __init__(self):
@@ -178,7 +192,7 @@ class Ui_MainWindow(object):
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
         self.actionProprietes.triggered.connect(lambda: show_properties_dialog())
-        self.actionOuvrir.triggered.connect(lambda: self.show_question_warning("Voulez-vous créer un nouveau fichier ?\nLes informations non-sauvegardées du fichier actuel seront perdues !"))
+        self.actionOuvrir.triggered.connect(lambda: self.nouv_fichier())
 
         self.retranslateUi(MainWindow)
 
@@ -255,8 +269,12 @@ class Ui_MainWindow(object):
             except Exception as e:
                 show_app_error(main_window, f'''Impossible d'afficher l'alerte "error_simple"\nMessage : {e}''')
 
-    def calculator(self, MainWindow):
-        pass
+    def nouv_fichier(self):
+        if self.show_question_warning("Voulez-vous créer un nouveau fichier ?\nLes informations non-sauvegardées du fichier actuel seront perdues !"):
+            print("yes clicked")
+            self.tableWidget.clearContents()
+            self.tableau.clear()
+            self.update_graph()
 
     def update_graph(self):
         self.tableau.clear()
@@ -289,9 +307,6 @@ class Ui_MainWindow(object):
         points = sorted([(float(x), float(y)) for x, y in zip(xs, ys)])
         self.graph.setData([p[0] for p in points], [p[1] for p in points])
 
-        #points = sorted(zip(xs, ys))
-        #self.graph.setData([point[0] for point in points],
-                           #[point[1] for point in points])
 
 class Ui_GraphPropDialog(object):
     def setupUi(self, GraphPropDialog):
@@ -339,6 +354,8 @@ class Ui_GraphPropDialog(object):
         self.lineEdit_2.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"X", None))
         self.label_3.setText(QCoreApplication.translate("GraphPropDialog", u"Titre des ordonn\u00e9es", None))
         self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("GraphPropDialog", u"Y", None))
+
+
 
 if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     app = QApplication(sys.argv)
