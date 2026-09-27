@@ -14,7 +14,8 @@ try:
     from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QLineEdit,
         QListView, QMainWindow, QMenu, QMenuBar,
         QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-        QToolBar, QVBoxLayout, QWidget, QMessageBox, QLabel, QDialog, QDialogButtonBox)
+        QToolBar, QVBoxLayout, QWidget, QMessageBox, QLabel, QDialog, QDialogButtonBox,
+        QFileDialog)
     import pyqtgraph as pg
 except ModuleNotFoundError as e:
     print('''FATAL :
@@ -187,6 +188,8 @@ class Ui_MainWindow(object):
 
         self.actionProprietes.triggered.connect(lambda: show_properties_dialog())
         self.actionOuvrir.triggered.connect(lambda: self.nouv_fichier())
+        self.actionEnregistrer.triggered.connect(lambda: self.chargement_donnees_utilisateur())
+        self.actionEnregistrer_sous.triggered.connect(lambda: self.sauvegarde_donnees_utilisateur())
 
         self.retranslateUi(MainWindow)
 
@@ -264,6 +267,71 @@ class Ui_MainWindow(object):
             self.tableWidget.clearContents()
             self.tableau.clear()
             self.update_graph()
+
+    def sauvegarde_donnees_utilisateur(self):
+        donnees = { 
+            "ordonées" : self.tableau.get()[1],
+            "abscisses" : self.tableau.get()[0],
+            "titre_graphique" : self.graph_title,
+            "titre ordonnees" : self.y_axis_title,
+            "titre abscisses" : self.x_axis_title
+        }
+        # Les données sont sauvegardeer sous forme de dictionnaire 
+
+        filepath, _ = QFileDialog.getSaveFileName(
+            main_window,
+            "Choisir l'emplacement du fichier",
+            "donnees.json",
+            "Fichiers JSON (*.json);;Tous les fichiers (*)"
+        )
+        if not filepath:
+            return
+
+        with open(filepath, "w", encoding="utf-8") as fichier: # Enregistrement dans le fichier choisi
+            json.dump(donnees, fichier, ensure_ascii=False, indent=4) # Convertit le dictionnaire python au format json sur un fichier text lisible par l'homme.
+
+
+    def chargement_donnees_utilisateur(self):
+        filepath, _ = QFileDialog.getOpenFileName(
+            main_window,
+            "Choisir le fichier à charger",
+            "donnees.json",
+            "Fichiers JSON (*.json);;Tous les fichiers (*)"
+        )
+        if not filepath:
+            return
+
+        with open(filepath, "r", encoding="utf-8") as fichier: 
+                donnees = json.load(fichier) # Charge le fichier json en dictionnaire python.
+                print(donnees) # Affiche le dictionnaire python des données chargées.
+                xs = donnees["abscisses"]
+                ys = donnees["ordonées"]
+                nombre_lignes = max(len(xs), len(ys))
+
+                # Do not let itemChanged call update_graph while cells are loaded.
+                self.tableWidget.blockSignals(True)
+                try: # ce try-finally a été écrit a l'aide d'outils IA (on as pas reussi a le faire nous même, ça ne voulais pas marcher)
+                    self.tableau.clear()
+                    self.tableWidget.clearContents()
+                    if self.tableWidget.rowCount() < nombre_lignes:
+                        self.tableWidget.setRowCount(nombre_lignes)
+                    for i, x in enumerate(xs):
+                        self.tableWidget.setItem(i, 0, QTableWidgetItem(str(x)))
+                    for i, y in enumerate(ys):
+                        self.tableWidget.setItem(i, 1, QTableWidgetItem(str(y)))
+                finally:
+                    self.tableWidget.blockSignals(False)
+                self.update_graph()
+
+                # Charger les propriétes du graphique
+                self.graph_title = donnees["titre_graphique"]
+                self.y_axis_title = donnees["titre ordonnees"]
+                self.x_axis_title = donnees["titre abscisses"]
+
+                #le code pour changer le titre graoh et x et y:
+                ui.graphWidget.setTitle(self.graph_title)
+                ui.graphWidget.getAxis('bottom').setLabel(self.x_axis_title)
+                ui.graphWidget.getAxis('left').setLabel(self.y_axis_title)
 
     def update_graph(self):
         self.tableau.clear() #Réinitialise le tableau de données en effaçant les anciennes valeurs
@@ -390,18 +458,3 @@ if __name__ == "__main__": #Fonction aidée par l'IA (les 6 premières lignes)
     ui.lineEdit.returnPressed.connect(handle_expression) # Demande a champ de saisie de nous dire quand l'utilisateur appuie sur entrée
     main_window.show()
     sys.exit(app.exec())
-
-def sauvegarde_donnees_utilisateur(donnees):
-    donnees = { 
-        "ordonées" : y
-        "abscisses" : x
-    }
-    # Les données sont sauvegardeer sous forme de dictionnaire 
-    
-    with open("donnees.json", "w", encoding="utf-8") as fichier: # Enregistrement dans un fichier nommé "donnees.json"
-        json.dump(donnees, fichier, ensure_ascii=False, indent=4) # Convertit le dictionnaire python au format json sur un fichier text lisible par l'homme.
-    
-def chargement_donnees_utilisateur():
-     with open("donnees.json", "r", encoding="utf-8") as fichier: 
-            donnees = json.load(fichier) # Charge le fichier json en dictionnaire python.
-            print(donnees) # Affiche le dictionnaire python des données chargées.
