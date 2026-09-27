@@ -50,14 +50,14 @@ class Tableau:
     def get(self):
         return self.xs, self.ys
 
-    def get_y(self, x):
+    def get_y(self, x): #Recherche et renvoie la valeur y associée à une valeur x donnée
         if x in self.xs:
             index = self.xs.index(x)
             return self.ys[index]
         else:
             return None
 
-    def clear(self):
+    def clear(self): #Efface complètement toutes les données des deux listes
         self.xs.clear()
         self.ys.clear()
 
@@ -276,8 +276,8 @@ class Ui_MainWindow(object):
             self.update_graph()
 
     def update_graph(self):
-        self.tableau.clear()
-        self.tableWidget.blockSignals(True)
+        self.tableau.clear() #Réinitialise le tableau de données en effaçant les anciennes valeurs
+        self.tableWidget.blockSignals(True) #Bloque les signaux du tableau de QTableWidget pour eviter des erreurs/repetitions pendant la mise à jour
         for row in range(self.tableWidget.rowCount()):
             x_item = self.tableWidget.item(row, 0)
             y_item = self.tableWidget.item(row, 1)
@@ -290,7 +290,7 @@ class Ui_MainWindow(object):
                 continue
             if x_str in self.tableau.xs:
                 self.show_error_simple("update_graph", f"Valeur de X en double : {x_str}")
-                self.tableWidget.blockSignals(False)
+                self.tableWidget.blockSignals(False) #Reactive les signaux avant de quitter
                 return
             try:
                 float(x_str)
@@ -299,12 +299,12 @@ class Ui_MainWindow(object):
                 self.show_error_simple("update_graph", f"Valeur non numérique : X={x_str}, Y={y_str}")
                 self.tableWidget.blockSignals(False)
                 return
-            self.tableau.add(x_str, y_str)
+            self.tableau.add(x_str, y_str) #Ajoute la paire validée au tableau de données
         self.tableWidget.blockSignals(False)
-        xs, ys = self.tableau.get()
+        xs, ys = self.tableau.get() #Récupère les listes finales de coordonnées x et ys
 
-        points = sorted([(float(x), float(y)) for x, y in zip(xs, ys)])
-        self.graph.setData([p[0] for p in points], [p[1] for p in points])
+        points = sorted([(float(x), float(y)) for x, y in zip(xs, ys)]) #Crée une liste triee de tuples (x, y) convertis en nombres flottants
+        self.graph.setData([p[0] for p in points], [p[1] for p in points]) #Met à jour le graphique avec les listes de coordonnées X et Y triées
 
 
 class Ui_GraphPropDialog(object):
