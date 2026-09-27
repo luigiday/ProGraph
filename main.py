@@ -324,9 +324,14 @@ class Ui_MainWindow(object):
                 self.update_graph()
 
                 # Charger les propriétes du graphique
-                self.graph_title = donnees["titre_graphique"]
-                self.y_axis_title = donnees["titre ordonnees"]
-                self.x_axis_title = donnees["titre abscisses"]
+                try:
+                    self.graph_title = donnees["titre_graphique"]
+                    self.y_axis_title = donnees["titre ordonnees"]
+                    self.x_axis_title = donnees["titre abscisses"]
+                except KeyError: #Si le fichier est un ancien modèle et n'as pas les titres, on met des valeurs par défaut
+                    self.graph_title = "Graphique des valeurs"
+                    self.x_axis_title = "X"
+                    self.y_axis_title = "Y"
 
                 #le code pour changer le titre graoh et x et y:
                 ui.graphWidget.setTitle(self.graph_title)
