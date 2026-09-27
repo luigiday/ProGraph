@@ -187,6 +187,7 @@ class Ui_MainWindow(object):
         self.maintoolBar.addAction(self.actionEnregistrer_sous)
 
         self.actionProprietes.triggered.connect(lambda: show_properties_dialog())
+        self.actionA_propos.triggered.connect(lambda: self.show_info_simple("ProGraph v-1.0\n\nDéveloppé par Colin, Noah et Timur\n\nLogiciel libre et open-source.\n\nLicence : MIT"))
         self.actionOuvrir.triggered.connect(lambda: self.nouv_fichier())
         self.actionEnregistrer.triggered.connect(lambda: self.chargement_donnees_utilisateur())
         self.actionEnregistrer_sous.triggered.connect(lambda: self.sauvegarde_donnees_utilisateur())
