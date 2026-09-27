@@ -19,8 +19,9 @@ except ModuleNotFoundError as e:
     print('''FATAL :
     Les modules ne sont pas installé !
     Veuillez éxecuter la commande : 
-    Windows : pip install PySide6
-    Linux (fedora) : sudo dnf install python3-pyside6 (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
+    Windows : pip install PySide6 pyqtgraph
+    Linux (ubuntu) : sudo apt install python3-pyside6 python3-pyqtgraph 
+    Linux (fedora) : sudo dnf install python3-pyside6 python3-pyqtgraph (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")''')
     print(e)
     sys.exit(1)
 
@@ -67,7 +68,7 @@ def show_app_error(parent, message):
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow): # le contenu de cette fonction est généré par QT Widget Designer (le logiciel qui nous as permis de créer l'interface graphique)
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(958, 600)
@@ -117,12 +118,8 @@ class Ui_MainWindow(object):
         self.menubar.setGeometry(QRect(0, 0, 958, 30))
         self.menuFichier = QMenu(self.menubar)
         self.menuFichier.setObjectName(u"menuFichier")
-        #self.menu_dition = QMenu(self.menubar)
-        #self.menu_dition.setObjectName(u"menu_dition")
         self.menuGraphe = QMenu(self.menubar)
         self.menuGraphe.setObjectName(u"menuGraphe")
-        self.menuTableau = QMenu(self.menubar)
-        self.menuTableau.setObjectName(u"menuTableau")
         self.menuAide = QMenu(self.menubar)
         self.menuAide.setObjectName(u"menuAide")
         MainWindow.setMenuBar(self.menubar)
@@ -177,14 +174,10 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFichier.menuAction())
         #self.menubar.addAction(self.menu_dition.menuAction())
         self.menubar.addAction(self.menuGraphe.menuAction())
-        self.menubar.addAction(self.menuTableau.menuAction())
         self.menubar.addAction(self.menuAide.menuAction())
         self.menuFichier.addAction(self.actionOuvrir)
         self.menuFichier.addAction(self.actionEnregistrer)
         self.menuFichier.addAction(self.actionEnregistrer_sous)
-        self.menuTableau.addAction(self.actionCharger_des_valeurs)
-        self.menuTableau.addAction(self.actionExporter_des_valeurs)
-        self.menuTableau.addAction(self.actionEffacer_toutes_les_valeurs)
         self.menuAide.addAction(self.actionA_propos)
         self.menuGraphe.addAction(self.actionProprietes)
         self.maintoolBar.addAction(self.actionOuvrir)
@@ -205,13 +198,10 @@ class Ui_MainWindow(object):
         self.y_axis_title = "Y"
     # setupUi
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow): # le contenu de cette fonction est généré par QT Widget Designer (le logiciel qui nous as permis de créer l'interface graphique)
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ProGraph", None))
         self.actionA_propos.setText(QCoreApplication.translate("MainWindow", u"A propos", None))
         self.actionProprietes.setText(QCoreApplication.translate("MainWindow", u"Propriétés", None))
-        self.actionCharger_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Charger des valeurs", None))
-        self.actionExporter_des_valeurs.setText(QCoreApplication.translate("MainWindow", u"Exporter des valeurs", None))
-        self.actionEffacer_toutes_les_valeurs.setText(QCoreApplication.translate("MainWindow", u"Effacer toutes les valeurs", None))
         self.actionOuvrir.setText(QCoreApplication.translate("MainWindow", u"Nouveau", None))
         self.actionEnregistrer.setText(QCoreApplication.translate("MainWindow", u"Ouvrir", None))
         self.actionEnregistrer_sous.setText(QCoreApplication.translate("MainWindow", u"Enregistrer", None))
@@ -222,7 +212,6 @@ class Ui_MainWindow(object):
         self.menuFichier.setTitle(QCoreApplication.translate("MainWindow", u"Fichier", None))
         #self.menu_dition.setTitle(QCoreApplication.translate("MainWindow", u"\u00c9dition", None))
         self.menuGraphe.setTitle(QCoreApplication.translate("MainWindow", u"Graphe", None))
-        self.menuTableau.setTitle(QCoreApplication.translate("MainWindow", u"Tableau", None))
         self.menuAide.setTitle(QCoreApplication.translate("MainWindow", u"Aide", None))
         self.dockWidget.setWindowTitle(QCoreApplication.translate("MainWindow", u"Tableau de valeurs", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
@@ -235,15 +224,15 @@ class Ui_MainWindow(object):
         self.maintoolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"Barre d'outils principale", None))
     # retranslateUi
 
-    def show_info_simple(self, text):
+    def show_info_simple(self, text): # les commentaires de cette fontion sont aussi valables pour les autres du style
         try:
-            msgBox = QMessageBox(parent=main_window)
-            msgBox.setText(f"{text}")
-            msgBox.setIcon(QMessageBox.Icon.Information)
-            msgBox.setWindowTitle("Information - ProGraph")
-            msgBox.exec()
+            msgBox = QMessageBox(parent=main_window) # crée k'objet Boit de dialogue
+            msgBox.setText(f"{text}") # Définit le texte de la boite de dialogue
+            msgBox.setIcon(QMessageBox.Icon.Information) # Définit l'icone de la boite de dialogue (ici une icone d'information)
+            msgBox.setWindowTitle("Information - ProGraph") # Définit le titre de la boite de dialogue
+            msgBox.exec() # Affiche la boite de dialogue
         except Exception as e:
-            show_app_error(main_window, f'''Impossible d'afficher l'alerte "info_simple"\nMessage : {e}''')
+            show_app_error(main_window, f'''Impossible d'afficher l'alerte "info_simple"\nMessage : {e}''') # Informer l'utilisateur en cas de problème
 
     def show_error_simple(self, action, text):
         try:
@@ -261,11 +250,11 @@ class Ui_MainWindow(object):
                 msgBox = QMessageBox(parent=main_window)
                 msgBox.setText(f"{text}")
                 msgBox.setIcon(QMessageBox.Icon.Warning)
-                msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-                msgBox.setDefaultButton(QMessageBox.StandardButton.No)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No) # Ajoute les boutons oui et non
+                msgBox.setDefaultButton(QMessageBox.StandardButton.No) # Définit non comme option par défaut
                 msgBox.setWindowTitle("Question - ProGraph")
                 r = msgBox.exec()
-                return r == QMessageBox.StandardButton.Yes
+                return r == QMessageBox.StandardButton.Yes # Retourne True si l'utilisateur clique sur OUI
             except Exception as e:
                 show_app_error(main_window, f'''Impossible d'afficher l'alerte "error_simple"\nMessage : {e}''')
 
@@ -307,7 +296,7 @@ class Ui_MainWindow(object):
         self.graph.setData([p[0] for p in points], [p[1] for p in points])
 
 
-class Ui_GraphPropDialog(object):
+class Ui_GraphPropDialog(object): #les contenus de cette classe sont géners par QT Widget Designer (le logiciel qui nous as permis de créer l'interface graphique)
     def setupUi(self, GraphPropDialog):
         if not GraphPropDialog.objectName():
             GraphPropDialog.setObjectName(u"GraphPropDialog")
