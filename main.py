@@ -304,9 +304,13 @@ class Ui_MainWindow(object):
         with open(filepath, "r", encoding="utf-8") as fichier: 
                 donnees = json.load(fichier) # Charge le fichier json en dictionnaire python.
                 print(donnees) # Affiche le dictionnaire python des données chargées.
-                xs = donnees["abscisses"]
-                ys = donnees["ordonées"]
-                nombre_lignes = max(len(xs), len(ys))
+                try:
+                    xs = donnees["abscisses"]
+                    ys = donnees["ordonées"]
+                    nombre_lignes = max(len(xs), len(ys))
+                except KeyError as e:
+                    self.show_error_simple("chargement_donnees_utilisateur", f"Erreur lors du chargement des données : Clé manquante {e}\nCela peut être dû à un fichier corrompu, mal formaté, ou prévu pour un autre logiciel. Veuillez vérifier le fichier et réessayer.")
+                    return
 
                 # Do not let itemChanged call update_graph while cells are loaded.
                 self.tableWidget.blockSignals(True)
@@ -319,6 +323,9 @@ class Ui_MainWindow(object):
                         self.tableWidget.setItem(i, 0, QTableWidgetItem(str(x)))
                     for i, y in enumerate(ys):
                         self.tableWidget.setItem(i, 1, QTableWidgetItem(str(y)))
+                except Exception as e:
+                    self.show_error_simple("chargement_donnees_utilisateur", f"Erreur lors du chargement des données : {e}\nCela peut être dû à un fichier corrompu ou mal formaté. Veuillez vérifier le fichier et réessayer.")
+                    return
                 finally:
                     self.tableWidget.blockSignals(False)
                 self.update_graph()
