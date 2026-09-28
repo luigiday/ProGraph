@@ -39,21 +39,33 @@ def calculate(e):
         allowed_nodes = (
             ast.Expression, ast.Constant, ast.BinOp, ast.UnaryOp,
             ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod,
-            ast.Pow, ast.UAdd, ast.USub,
+            ast.Pow, ast.UAdd, ast.USub, ast.Call, ast.Name, ast.Load,
         )
         tree = ast.parse(e, mode="eval")
-        if any(not isinstance(node, allowed_nodes) for node in ast.walk(tree)):
-            raise SyntaxError("Expression contains an unsupported operation")
-
-        a = eval(compile(tree, "<expression>", "eval"), {"__builtins__": {}}, {})
+        allowed_functions = {"abs": abs, "int": int, "float": float, "round": round}
+        for node in ast.walk(tree):
+            if not isinstance(node, allowed_nodes):
+                raise SyntaxError("Expression contains an unsupported operation")
+            if isinstance(node, ast.Name) and node.id not in allowed_functions:
+                raise SyntaxError("Expression contains an unsupported name")
+            if isinstance(node, ast.Call) and (
+                not isinstance(node.func, ast.Name)
+                or node.func.id not in allowed_functions
+                or node.keywords
+            ):
+                raise SyntaxError("Expression contains an unsupported function")
+        try:
+            a = eval(
+                compile(tree, "<expression>", "eval"),
+                {"__builtins__": {}},
+                allowed_functions,
+            )
+        except ZeroDivisionError:
+            a = "Impossible"
         return str(a)
     
-    except ZeroDivisionError:
-        return "Impossible"
-    except SyntaxError:
-        raise SyntaxError("Erreur de syntaxe dans l'expression ou l'expression n'est pas un calcul valide")
-    except Exception as ex:
-        raise SyntaxError("L'expression saisie n'est pas un calcul")
+    except Exception as e:
+        raise ValueError(f"Erreur lors du calcul de l'expression : {e}")
 
 class Tableau:
     def __init__(self):
