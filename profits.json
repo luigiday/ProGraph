@@ -1,0 +1,17 @@
+{
+    "ordonées": [
+        "200",
+        "400",
+        "800",
+        "1200"
+    ],
+    "abscisses": [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    "titre_graphique": "Graphique des valeurs",
+    "titre ordonnees": "Y",
+    "titre abscisses": "X"
+}

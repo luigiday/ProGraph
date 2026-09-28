@@ -29,9 +29,23 @@ except ModuleNotFoundError as e:
 
 def calculate(e):
     try:
+        import ast
+
         if "^" in e:
             e = e.replace("^", "**")
-        a = eval(e)
+
+        # Restrict evaluation to arithmetic syntax; reject calls, names,
+        # attribute access, and all other executable Python constructs.
+        allowed_nodes = (
+            ast.Expression, ast.Constant, ast.BinOp, ast.UnaryOp,
+            ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod,
+            ast.Pow, ast.UAdd, ast.USub,
+        )
+        tree = ast.parse(e, mode="eval")
+        if any(not isinstance(node, allowed_nodes) for node in ast.walk(tree)):
+            raise SyntaxError("Expression contains an unsupported operation")
+
+        a = eval(compile(tree, "<expression>", "eval"), {"__builtins__": {}}, {})
         return str(a)
     
     except ZeroDivisionError:
