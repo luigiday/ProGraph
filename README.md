@@ -16,15 +16,16 @@ nous n’utilise une autre distribution))
 
 ### En cas de problème :
 SI l’erreur
+```
 FATAL :
 Les modules ne sont pas installé !
 Veuillez éxecuter la commande :
 Windows : pip install PySide6 pyqtgraph
 Linux (ubuntu) : sudo apt install python3-pyside6 python3-pyqtgraph
-Linux (fedora) : sudo dnf install python3-pyside6 python3-pyqtgraph (autres distribs, voir
-"Installer PySide6 dans votre gestionnaire de paquets")
-S’affiche au lancement malgré que vous ayez installé les modules (en dessous s’affichera aussi
-le nom exact du module manquant)
+Linux (fedora) : sudo dnf install python3-pyside6 python3-pyqtgraph (autres distribs, voir "Installer PySide6 dans votre gestionnaire de paquets")
+```
+
+S’affiche au lancement malgré que vous ayez installé les modules (en dessous s’affichera aussi le nom exact du module manquant)
 Vous pouvez...
 – Essayez sur un autre OS
 – Essayez sur une autre machine
